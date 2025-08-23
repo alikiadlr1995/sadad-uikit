@@ -1,3 +1,14 @@
-@tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+/* فونت پیش‌فرض نرم */
+@layer base {
+  :root { --ui-font: ui-sans-serif; }
+}
+
+/* utility فونت UI */
+@layer utilities {
+  .font-ui {
+    font-family: var(--ui-font), ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial, "Noto Sans";
+  }
+}

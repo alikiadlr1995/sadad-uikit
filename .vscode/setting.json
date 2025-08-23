@@ -1,0 +1,9 @@
+{
+  "tailwindCSS.experimental.configFile": "./tailwind.config.js",
+  "editor.quickSuggestions": {
+    "strings": true
+  },
+  "files.associations": {
+    "*.css": "tailwindcss"
+  }
+}
