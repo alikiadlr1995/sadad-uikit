@@ -1,0 +1,26 @@
+import { Meta, Title, Subtitle, Description, ArgsTable, Canvas, Story, Source, Stories } from '@storybook/blocks';
+import * as React from 'react';
+import { JalaliDatePicker } from './JalaliDatePicker';
+
+<Meta title="Components/JalaliDatePicker" of={JalaliDatePicker} />
+
+<Title>JalaliDatePicker</Title>
+<Subtitle>Persian (Jalali) Date Picker — Tailwind v3, themable, and fully overridable</Subtitle>
+
+<Description>
+<strong>JalaliDatePicker</strong> supports single-date and range selection with a Jalali calendar.
+Highlights:
+<ul>
+<li>Tailwind v3 friendly</li>
+<li>Variants: <code>primary</code>, <code>secondary</code>, <code>success</code>, <code>danger</code>, <code>warning</code>, <code>neutral</code></li>
+<li>Theming tokens via <code>calendarVars</code></li>
+<li>Structural overrides via <code>calendarClassNames</code></li>
+<li>RTL by default and app-font via <code>--ui-font</code> (or <code>UIProvider</code>)</li>
+</ul>
+</Description>
+
+## Quick Start (consumer app)
+
+```ts
+import 'sadad-uikit/styles.css';
+import './index.css';

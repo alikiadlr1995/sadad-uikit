@@ -1,0 +1,75 @@
+import { Meta, Title, Subtitle, Description, ArgsTable, Canvas, Story, Source, Stories } from '@storybook/blocks';
+import * as React from 'react';
+import { Drawer } from './Drawer';
+
+<Meta title="Components/Drawer" of={Drawer} />
+
+<Title>Drawer</Title>
+<Subtitle>Clean, accessible drawer with Tailwind v3 — variants, theming tokens, and slot overrides</Subtitle>
+
+<Description>
+**Drawer** renders a sliding panel on any side. It supports:
+<ul>
+<li>Placements: <code>right</code>, <code>left</code>, <code>top</code>, <code>bottom</code></li>
+<li>Variants: <code>primary</code>, <code>secondary</code>, <code>success</code>, <code>danger</code>, <code>warning</code>, <code>neutral</code></li>
+<li>Theming tokens via <code>vars</code> (overlay/panel colors, radius, shadow, ring, size)</li>
+<li>Slot overrides via <code>classNames</code> (overlay, panel, header, body, footer…)</li>
+<li>Accessibility: <code>role="dialog"</code>, <code>aria-modal</code>, ESC to close, optional focus trap & focus return</li>
+<li>Portal to <code>document.body</code> by default</li>
+</ul>
+</Description>
+
+## Props
+<ArgsTable of={Drawer} />
+
+### Theming tokens (`vars`)
+| Token | Purpose | Example |
+|---|---|---|
+| `overlayBg` | Backdrop color | `rgba(0,0,0,.5)` |
+| `panelBg` / `panelColor` | Panel colors | `#fff` / `#111827` |
+| `radius` | Panel corner radius | `16px` |
+| `shadow` | Panel shadow | `0 20px 60px rgba(0,0,0,.15)` |
+| `ring` | Focus ring color | `#2563eb` |
+| `borderColor` | Panel border color | `#e5e7eb` |
+| `size` | Width (left/right) or height (top/bottom) | `28rem` |
+| `zIndex` | Root z-index | `60` |
+
+### Class slots (`classNames`)
+`root`, `overlay`, `panel`, `header`, `title`, `description`, `body`, `footer`, `close`.
+
+---
+
+## Playground
+<Canvas>
+  <Story name="Playground">
+    {() => {
+      const [open, setOpen] = React.useState(false);
+      return (
+        <div className="font-ui">
+          <button className="px-3 py-2 rounded-md border" onClick={() => setOpen(true)}>Open drawer</button>
+          <Drawer
+            open={open}
+            onOpenChange={setOpen}
+            id="drawer-docs"
+            title="Drawer title"
+            description="Optional short description"
+            footer={<div className="flex justify-end gap-2"><button className="px-3 py-2 rounded-md border" onClick={()=>setOpen(false)}>Close</button></div>}
+          >
+            <p className="text-sm text-gray-700">Put your content here.</p>
+          </Drawer>
+        </div>
+      );
+    }}
+  </Story>
+</Canvas>
+
+### Variant + tokens
+<Source language="tsx" code={`<Drawer
+  open={open}
+  onOpenChange={setOpen}
+  placement="right"
+  variant="primary"
+  vars={{ radius: 20, overlayBg: 'rgba(37,99,235,.35)', size: '28rem' }}
+/>`} />
+
+<Stories />

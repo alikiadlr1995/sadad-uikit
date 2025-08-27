@@ -1,182 +1,139 @@
 import * as React from "react";
-import { twMerge } from "tailwind-merge";
 import clsx from "clsx";
+import { twMerge } from "tailwind-merge";
 
 export type ButtonVariant =
-  | "primary"
-  | "secondary"
-  | "ghost"
-  | "outline"
-  | "danger"
-  | "link";
-export type ButtonSize = "sm" | "md" | "lg" | "icon";
-export type ButtonRadius = "none" | "sm" | "md" | "lg" | "xl" | "2xl" | "full";
+  | "primary" | "secondary" | "success" | "danger" | "warning" | "neutral"
+  | "outline" | "ghost";
 
-export type ButtonProps = Omit<
-  React.ButtonHTMLAttributes<HTMLButtonElement>,
-  "color"
-> & {
+export type ButtonSize = "sm" | "md" | "lg";
+
+export type ButtonVars = {
+  bg?: string;            // پس‌زمینه
+  color?: string;         // رنگ متن
+  border?: string;        // رنگ بوردر
+  hoverBg?: string;       // هاور پس‌زمینه
+  hoverColor?: string;    // هاور رنگ متن
+  radius?: string | number; // گردی
+  px?: string | number;   // پدینگ افقی
+  py?: string | number;   // پدینگ عمودی
+  ring?: string;          // رنگ ring فوکوس
+};
+
+export type ButtonSlotName = "root" | "content" | "iconLeft" | "iconRight" | "spinner";
+
+export type ButtonProps = Omit<React.ButtonHTMLAttributes<HTMLButtonElement>, "color"> & {
   variant?: ButtonVariant;
   size?: ButtonSize;
-  radius?: ButtonRadius;
   fullWidth?: boolean;
-  isLoading?: boolean;
-  loadingText?: string;
-  leadingIcon?: React.ReactNode;
-  trailingIcon?: React.ReactNode;
-  fontFamily?: string | string[];
+  loading?: boolean;
+  leftIcon?: React.ReactNode;
+  rightIcon?: React.ReactNode;
+  /** توکن‌ها (قابل Override از بیرون) */
+  vars?: ButtonVars;
+  /** کلاس‌های اسلات‌ها برای Override ساختاری */
+  classNames?: Partial<Record<ButtonSlotName, string>>;
 };
 
-const base =
-  "inline-flex items-center justify-center font-ui font-medium transition-colors " +
-  "focus:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 " +
-  "disabled:cursor-not-allowed";
-
-const sizes: Record<ButtonSize, string> = {
-  sm: "h-8 px-3 text-sm gap-1.5",
-  md: "h-10 px-4 text-sm gap-2",
-  lg: "h-12 px-5 text-base gap-2.5",
-  icon: "h-10 w-10 p-0",
+/** پالت‌های پیش‌فرض برای Variantها */
+const VARS_BY_VARIANT: Record<NonNullable<ButtonProps["variant"]>, Required<Pick<ButtonVars,
+  "bg" | "color" | "border" | "hoverBg" | "hoverColor" | "ring" | "radius" | "px" | "py"
+>>> = {
+  primary:   { bg:"#2563eb", color:"#fff",    border:"transparent", hoverBg:"#1d4ed8", hoverColor:"#fff", ring:"#2563eb", radius:"10px", px:"16px", py:"10px" },
+  secondary: { bg:"#6b7280", color:"#fff",    border:"transparent", hoverBg:"#4b5563", hoverColor:"#fff", ring:"#6b7280", radius:"10px", px:"16px", py:"10px" },
+  success:   { bg:"#10b981", color:"#fff",    border:"transparent", hoverBg:"#059669", hoverColor:"#fff", ring:"#10b981", radius:"10px", px:"16px", py:"10px" },
+  danger:    { bg:"#ef4444", color:"#fff",    border:"transparent", hoverBg:"#dc2626", hoverColor:"#fff", ring:"#ef4444", radius:"10px", px:"16px", py:"10px" },
+  warning:   { bg:"#f59e0b", color:"#111827", border:"transparent", hoverBg:"#d97706", hoverColor:"#111827", ring:"#f59e0b", radius:"10px", px:"16px", py:"10px" },
+  neutral:   { bg:"#475569", color:"#fff",    border:"transparent", hoverBg:"#334155", hoverColor:"#fff", ring:"#475569", radius:"10px", px:"16px", py:"10px" },
+  outline:   { bg:"transparent", color:"#2563eb", border:"#2563eb", hoverBg:"rgba(37,99,235,.08)", hoverColor:"#2563eb", ring:"#2563eb", radius:"10px", px:"16px", py:"10px" },
+  ghost:     { bg:"transparent", color:"#111827", border:"transparent", hoverBg:"rgba(0,0,0,.06)", hoverColor:"#111827", ring:"#2563eb", radius:"10px", px:"16px", py:"10px" },
 };
 
-const radii: Record<ButtonRadius, string> = {
-  none: "rounded-none",
-  sm: "rounded",
-  md: "rounded-md",
-  lg: "rounded-lg",
-  xl: "rounded-xl",
-  "2xl": "rounded-2xl",
-  full: "rounded-full",
+const SIZE_CLASS: Record<ButtonSize, string> = {
+  sm: "text-xs gap-1.5",
+  md: "text-sm gap-2",
+  lg: "text-base gap-2.5",
 };
 
-const variants: Record<ButtonVariant, string> = {
-  primary:
-    "bg-blue-600 text-white hover:bg-blue-700 focus-visible:ring-blue-600 disabled:bg-blue-400",
-  secondary:
-    "bg-gray-100 text-gray-900 hover:bg-gray-200 focus-visible:ring-gray-400 disabled:bg-gray-100 disabled:text-gray-400",
-  ghost:
-    "bg-transparent text-gray-900 hover:bg-gray-100 focus-visible:ring-gray-400 disabled:text-gray-400",
-  outline:
-    "bg-transparent text-gray-900 border border-gray-300 hover:bg-gray-50 focus-visible:ring-gray-400 disabled:text-gray-400 disabled:border-gray-200",
-  danger:
-    "bg-red-600 text-white hover:bg-red-700 focus-visible:ring-red-600 disabled:bg-red-400",
-  link: "bg-transparent text-blue-600 underline-offset-4 hover:underline focus-visible:ring-blue-600 px-0",
+export const Button: React.FC<ButtonProps> = ({
+  variant = "primary",
+  size = "md",
+  fullWidth,
+  loading,
+  leftIcon,
+  rightIcon,
+  vars,
+  classNames,
+  className,
+  children,
+  disabled,
+  ...rest
+}) => {
+  // 1) set CSS variables (variant defaults → overrides)
+  const base = VARS_BY_VARIANT[variant];
+  const styleVars: React.CSSProperties = {
+    ["--btn-bg" as any]: base.bg,
+    ["--btn-color" as any]: base.color,
+    ["--btn-border" as any]: base.border,
+    ["--btn-hover-bg" as any]: base.hoverBg,
+    ["--btn-hover-color" as any]: base.hoverColor,
+    ["--btn-radius" as any]: base.radius,
+    ["--btn-px" as any]: base.px,
+    ["--btn-py" as any]: base.py,
+    ["--btn-ring" as any]: base.ring,
+  };
+  if (vars?.bg)         (styleVars as any)["--btn-bg"] = vars.bg;
+  if (vars?.color)      (styleVars as any)["--btn-color"] = vars.color;
+  if (vars?.border)     (styleVars as any)["--btn-border"] = vars.border;
+  if (vars?.hoverBg)    (styleVars as any)["--btn-hover-bg"] = vars.hoverBg;
+  if (vars?.hoverColor) (styleVars as any)["--btn-hover-color"] = vars.hoverColor;
+  if (vars?.radius)     (styleVars as any)["--btn-radius"] = typeof vars.radius === "number" ? `${vars.radius}px` : vars.radius;
+  if (vars?.px)         (styleVars as any)["--btn-px"] = typeof vars.px === "number" ? `${vars.px}px` : vars.px;
+  if (vars?.py)         (styleVars as any)["--btn-py"] = typeof vars.py === "number" ? `${vars.py}px` : vars.py;
+  if (vars?.ring)       (styleVars as any)["--btn-ring"] = vars.ring;
+
+  // 2) classes (Tailwind v3 + arbitrary values)
+  const rootBase =
+    "font-ui inline-flex items-center justify-center select-none transition " +
+    "focus:outline-none focus-visible:ring-2 " +
+    "focus-visible:ring-[var(--btn-ring,#2563eb)] " +
+    "border disabled:opacity-50 disabled:cursor-not-allowed";
+
+  const rootLook = clsx(
+    "bg-[var(--btn-bg,#2563eb)] text-[var(--btn-color,#fff)] border-[var(--btn-border,transparent)]",
+    "hover:bg-[var(--btn-hover-bg,var(--btn-bg,#2563eb))] hover:text-[var(--btn-hover-color,var(--btn-color,#fff))]",
+    "rounded-[var(--btn-radius,10px)]",
+    "px-[var(--btn-px,16px)] py-[var(--btn-py,10px)]"
+  );
+
+  const rootSize = SIZE_CLASS[size];
+  const rootWidth = fullWidth ? "w-full" : undefined;
+
+  const rootCn = twMerge(clsx(rootBase, rootLook, rootSize, rootWidth, classNames?.root, className));
+
+  const contentCn = twMerge(clsx("inline-flex items-center", classNames?.content));
+  const iconLeftCn = twMerge(clsx("-ms-0.5", classNames?.iconLeft));
+  const iconRightCn = twMerge(clsx("-me-0.5", classNames?.iconRight));
+  const spinnerCn = twMerge(clsx("ms-2 h-4 w-4 animate-spin", classNames?.spinner));
+
+  return (
+    <button
+      type="button"
+      className={rootCn}
+      style={styleVars}
+      disabled={disabled || loading}
+      {...rest}
+    >
+      {leftIcon ? <span className={iconLeftCn}>{leftIcon}</span> : null}
+      <span className={contentCn}>{children}</span>
+      {loading ? (
+        <svg viewBox="0 0 24 24" className={spinnerCn} aria-hidden="true">
+          <circle cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="3" fill="none" opacity="0.25"/>
+          <path d="M22 12a10 10 0 0 1-10 10" stroke="currentColor" strokeWidth="3" fill="none"/>
+        </svg>
+      ) : rightIcon ? (
+        <span className={iconRightCn}>{rightIcon}</span>
+      ) : null}
+    </button>
+  );
 };
-
-type CSSVarStyle = React.CSSProperties & { ["--ui-font"]?: string };
-
-const quoteIfNeeded = (name: string) =>
-  /\s/.test(name) && !/^["'].*["']$/.test(name) ? `"${name}"` : name;
-
-const toCssFontFamily = (ff?: string | string[]) =>
-  !ff
-    ? undefined
-    : Array.isArray(ff)
-      ? ff.map(quoteIfNeeded).join(", ")
-      : quoteIfNeeded(ff);
-
-export const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
-  (
-    {
-      variant = "primary",
-      size = "md",
-      radius = "lg",
-      fullWidth,
-      isLoading,
-      loadingText,
-      leadingIcon,
-      trailingIcon,
-      fontFamily,
-      className,
-      disabled,
-      type, // پیش‌فرض می‌ذاریم button
-      children,
-      ...rest
-    },
-    ref
-  ) => {
-    const composed = twMerge(
-      clsx(
-        base,
-        sizes[size],
-        radii[radius],
-        variants[variant],
-        fullWidth && "w-full",
-        isLoading && "pointer-events-none",
-        className
-      )
-    );
-
-    const varStyle: CSSVarStyle = {};
-    const cssFont = toCssFontFamily(fontFamily);
-    if (cssFont) varStyle["--ui-font"] = cssFont;
-
-    return (
-      <button
-        ref={ref}
-        type={type ?? "button"}
-        className={composed}
-        disabled={disabled || isLoading}
-        aria-busy={isLoading || undefined}
-        {...rest}
-      >
-        {/* Spinner هنگام لود */}
-        {isLoading && (
-          <svg
-            className={twMerge(
-              clsx(
-                "animate-spin -ml-0.5",
-                size === "lg" ? "h-5 w-5" : "h-4 w-4",
-                variant === "link" && "mr-2"
-              )
-            )}
-            viewBox="0 0 24 24"
-            fill="none"
-            aria-hidden="true"
-          >
-            <circle
-              className="opacity-25"
-              cx="12"
-              cy="12"
-              r="10"
-              stroke="currentColor"
-              strokeWidth="4"
-            />
-            <path
-              className="opacity-75"
-              fill="currentColor"
-              d="M4 12a8 8 0 018-8v4a4 4 0 00-4 4H4z"
-            />
-          </svg>
-        )}
-
-        {/* آیکن ابتدای دکمه */}
-        {!isLoading && leadingIcon && (
-          <span
-            className={clsx("inline-flex", size === "sm" ? "-ml-0.5" : "-ml-1")}
-          >
-            {leadingIcon}
-          </span>
-        )}
-
-        {/* متن */}
-        <span
-          className={clsx("whitespace-nowrap", variant === "link" && "px-1")}
-        >
-          {isLoading ? (loadingText ?? children) : children}
-        </span>
-
-        {/* آیکن انتهای دکمه */}
-        {!isLoading && trailingIcon && (
-          <span
-            className={clsx("inline-flex", size === "sm" ? "-mr-0.5" : "-mr-1")}
-          >
-            {trailingIcon}
-          </span>
-        )}
-      </button>
-    );
-  }
-);
-
-Button.displayName = "Button";

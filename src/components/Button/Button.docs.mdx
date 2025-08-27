@@ -1,0 +1,25 @@
+import { Meta, Title, Subtitle, Description, ArgsTable, Canvas, Story, Source, Stories } from '@storybook/blocks';
+import * as React from 'react';
+import { Button } from './Button';
+
+<Meta title="Components/Button" of={Button} />
+
+<Title>Button</Title>
+<Subtitle>Tailwind v3 button with variants, sizes, and full theming/override</Subtitle>
+
+<Description>
+**Button** supports:
+- Variants: <code>primary</code>, <code>secondary</code>, <code>success</code>, <code>danger</code>, <code>warning</code>, <code>neutral</code>, <code>outline</code>, <code>ghost</code>
+- Sizes: <code>sm</code>, <code>md</code>, <code>lg</code>
+- Tokens via <code>vars</code> (colors, radius, paddings, focus ring)
+- Slot class overrides via <code>classNames</code>
+- Loading state, left/right icons, and fullWidth
+</Description>
+
+## Usage
+```tsx
+import { Button } from 'sadad-uikit';
+
+<Button variant="primary">Action</Button>
+<Button variant="outline">Cancel</Button>
+<Button variant="success" size="lg" leftIcon={<span>✓</span>}>Saved</Button>

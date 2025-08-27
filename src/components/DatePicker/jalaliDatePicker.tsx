@@ -1,8 +1,8 @@
 import * as React from "react";
-import { twMerge } from "tailwind-merge";
 import clsx from "clsx";
+import { twMerge } from "tailwind-merge";
 import { toJalaali } from "jalaali-js";
-import { JalaliCalendar, RangeValue } from "./jalaliCalendar";
+import { JalaliCalendar, RangeValue, JalaliCalendarProps, CalendarVars } from "./jalaliCalendar";
 
 export type JalaliDatePickerProps = {
   mode?: "single" | "range";
@@ -28,6 +28,13 @@ export type JalaliDatePickerProps = {
   inputClassName?: string;
   popoverClassName?: string;
   dir?: "rtl" | "ltr";
+
+
+  variant?: JalaliCalendarProps["variant"];
+
+
+  calendarVars?: CalendarVars;
+  calendarClassNames?: JalaliCalendarProps["classNames"];
 };
 
 const toFaDigits = (s: string) => s.replace(/\d/g, d => "۰۱۲۳۴۵۶۷۸۹"[+d]);
@@ -66,6 +73,9 @@ export const JalaliDatePicker: React.FC<JalaliDatePickerProps> = ({
   inputClassName,
   popoverClassName,
   dir = "rtl",
+  variant = "primary",
+  calendarVars,
+  calendarClassNames,
 }) => {
   const isCtrl = value !== undefined;
   const [internalValue, setInternalValue] = React.useState<Date|RangeValue|null>(defaultValue);
@@ -98,8 +108,8 @@ export const JalaliDatePicker: React.FC<JalaliDatePickerProps> = ({
       <div className="flex items-center gap-2">
         <input
           className={twMerge(clsx(
-            "h-10 px-3 rounded-md border border-gray-300 focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-600",
-            "text-sm w-56",
+            "h-10 px-3 rounded-md border border-gray-300 focus:outline-none focus-visible:ring-2 focus-visible:ring-[var(--dp-focus-ring,#2563eb)]",
+            "text-sm w-[19.5rem]",
             disabled && "bg-gray-50 text-gray-400 cursor-not-allowed",
             inputClassName
           ))}
@@ -139,6 +149,9 @@ export const JalaliDatePicker: React.FC<JalaliDatePickerProps> = ({
             isDateDisabled={isDateDisabled}
             toPersianDigits={toPersianDigits}
             dir={dir}
+            variant={variant}
+            vars={calendarVars}
+            classNames={calendarClassNames}
           />
           <div className="mt-3 flex justify-end">
             <button
