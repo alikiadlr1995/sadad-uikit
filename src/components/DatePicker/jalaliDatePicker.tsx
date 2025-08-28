@@ -2,7 +2,7 @@ import * as React from "react";
 import clsx from "clsx";
 import { twMerge } from "tailwind-merge";
 import { toJalaali } from "jalaali-js";
-import { JalaliCalendar, RangeValue, JalaliCalendarProps, CalendarVars } from "./jalaliCalendar";
+import { JalaliCalendar, RangeValue, JalaliCalendarProps, CalendarVars } from "./JalaliCalendar";
 
 export type JalaliDatePickerProps = {
   mode?: "single" | "range";
@@ -40,18 +40,21 @@ export type JalaliDatePickerProps = {
 const toFaDigits = (s: string) => s.replace(/\d/g, d => "۰۱۲۳۴۵۶۷۸۹"[+d]);
 const pad2 = (n: number) => (n < 10 ? `0${n}` : `${n}`);
 
-function defaultFormat(v: Date | RangeValue | null, toFa = true) {
+function defaultFormat(v: Date | RangeValue | null, toFa: boolean = true): string {
   if (!v) return "";
+
   if (v instanceof Date) {
-    const j = toJalaali(v.getFullYear(), v.getMonth()+1, v.getDate());
-    const str = `${j.jy}/${pad2(j.jm)}/${pad2(j.jd)}`;
-    return toFa ? toFaDigits(str) : str;
+    const j = toJalaali(v.getFullYear(), v.getMonth() + 1, v.getDate());
+    const one: string = `${j.jy}/${pad2(j.jm)}/${pad2(j.jd)}`;
+    return toFa ? toFaDigits(one) : one;
   }
-  const { start, end } = v;
-  const s = start ? defaultFormat(start, false) : "";
-  const e = end ? defaultFormat(end, false) : "";
-  const str = end ? `${s} – ${e}` : s;
-  return toFa ? toFaDigits(str) : str;
+
+  const { start, end } = v as RangeValue;
+  const s: string = start ? defaultFormat(start, false) : "";
+  const e: string = end ? defaultFormat(end, false) : "";
+  const out: string = end ? `${s} – ${e}` : s;
+
+  return toFa ? toFaDigits(out) : out;
 }
 
 export const JalaliDatePicker: React.FC<JalaliDatePickerProps> = ({

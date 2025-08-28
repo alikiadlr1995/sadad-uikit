@@ -1,11 +1,11 @@
-export { JalaliCalendar } from "./jalaliCalendar";
+export { JalaliCalendar } from "./JalaliCalendar";
 export type {
   JalaliCalendarProps,
   CalendarVars,
   CalendarSlotName,
   Mode,
   RangeValue
-} from "./jalaliCalendar";
+} from "./JalaliCalendar";
 
-export { JalaliDatePicker } from "./jalaliDatePicker";
-export type { JalaliDatePickerProps } from "./jalaliDatePicker";
+export { JalaliDatePicker } from "./JalaliDatePicker";
+export type { JalaliDatePickerProps } from "./JalaliDatePicker";

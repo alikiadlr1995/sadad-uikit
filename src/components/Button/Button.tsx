@@ -9,15 +9,15 @@ export type ButtonVariant =
 export type ButtonSize = "sm" | "md" | "lg";
 
 export type ButtonVars = {
-  bg?: string;            // پس‌زمینه
-  color?: string;         // رنگ متن
-  border?: string;        // رنگ بوردر
-  hoverBg?: string;       // هاور پس‌زمینه
-  hoverColor?: string;    // هاور رنگ متن
-  radius?: string | number; // گردی
-  px?: string | number;   // پدینگ افقی
-  py?: string | number;   // پدینگ عمودی
-  ring?: string;          // رنگ ring فوکوس
+  bg?: string;         
+  color?: string;    
+  border?: string;      
+  hoverBg?: string;       
+  hoverColor?: string;    
+  radius?: string | number; 
+  px?: string | number;  
+  py?: string | number;   
+  ring?: string;          
 };
 
 export type ButtonSlotName = "root" | "content" | "iconLeft" | "iconRight" | "spinner";
@@ -29,13 +29,10 @@ export type ButtonProps = Omit<React.ButtonHTMLAttributes<HTMLButtonElement>, "c
   loading?: boolean;
   leftIcon?: React.ReactNode;
   rightIcon?: React.ReactNode;
-  /** توکن‌ها (قابل Override از بیرون) */
   vars?: ButtonVars;
-  /** کلاس‌های اسلات‌ها برای Override ساختاری */
   classNames?: Partial<Record<ButtonSlotName, string>>;
 };
 
-/** پالت‌های پیش‌فرض برای Variantها */
 const VARS_BY_VARIANT: Record<NonNullable<ButtonProps["variant"]>, Required<Pick<ButtonVars,
   "bg" | "color" | "border" | "hoverBg" | "hoverColor" | "ring" | "radius" | "px" | "py"
 >>> = {

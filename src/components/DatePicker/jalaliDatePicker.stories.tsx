@@ -1,6 +1,6 @@
 import type { Meta, StoryObj } from "@storybook/react";
 import * as React from "react";
-import { JalaliDatePicker } from "./jalaliDatePicker";
+import { JalaliDatePicker } from "./JalaliDatePicker";
 import '../../styles/tw.css'
 import '../../styles/styles.css'
 

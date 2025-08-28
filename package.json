@@ -28,7 +28,7 @@
     "react-dom": ">=18",
     "tailwindcss": ">=3 <4"
   },
-    "dependencies": {
+  "dependencies": {
     "clsx": "^2.1.1",
     "jalaali-js": "^1.2.8",
     "tailwind-merge": "^3.3.1"
@@ -57,8 +57,9 @@
     "build:storybook": "storybook build -o ./.storybook-static",
     "build:lib": "tsup",
     "build:css": "npx tailwindcss -c tailwind.config.cjs -i ./src/styles/styles.css -o ./dist/styles.css --minify",
-    "build": "npm run build:lib && npm run build:css",
-    "prepublishOnly": "npm run build"
+    "prepack": "npm run build:lib && npm run build:css",
+    "build": "npm pack --silent",
+    "prepublishOnly": "npm run build:lib && npm run build:css"
   },
   "sideEffects": [
     "**/*.css"
